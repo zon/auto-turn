@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.4" tiledversion="1.4.3" name="walls" tilewidth="8" tileheight="8" tilecount="256" columns="16">
+<tileset version="1.4" tiledversion="1.4.3" name="walls" tilewidth="16" tileheight="16" tilecount="64" columns="8">
  <image source="../walls.png" width="128" height="128"/>
+ <tile id="0">
+  <properties>
+   <property name="solid" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="1">
+  <properties>
+   <property name="spawn" type="bool" value="true"/>
+  </properties>
+ </tile>
 </tileset>
