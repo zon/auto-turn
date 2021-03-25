@@ -10,7 +10,7 @@ class ServerGame extends Game {
 
 	public function createEntity(x, y, playerId) {
 		while (autoId <= 0 || getEntity(autoId) != null) {
-			autoId = Calc.min(autoId + 1, 1);
+			autoId = Calc.max(autoId + 1, 1);
 		}
 		var entity = new Entity(autoId, playerId);
 		return addEntity(x, y, entity);

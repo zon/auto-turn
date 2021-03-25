@@ -8,6 +8,10 @@ class Calc {
 		return a < b ? a : b;
 	}
 
+	public static function max(a: Int, b: Int) {
+		return a > b ? a : b;
+	}
+
 	public static function lerp(a: Float, b: Float, p: Float) {
 		return a + (b - a) * p;
 	}

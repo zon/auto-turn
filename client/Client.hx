@@ -54,7 +54,7 @@ class Client extends UDProteanClient {
 
 	override function onDisconnect() {
 		trace('Disconnected');
-		Sys.exit(0);
+		// Sys.exit(0);
 	}
 
 	public function sendMove(x: Int, y: Int) {
