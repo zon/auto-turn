@@ -10,7 +10,7 @@ class GridMovement {
 	public var py = 0;
 
 	// stats
-	public var actionDuration = 0.5;
+	public var actionDuration = 0.25;
 	public var pauseDuration = 2;
 
 	// state

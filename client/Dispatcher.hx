@@ -32,10 +32,10 @@ class Dispatcher {
 	}
 
 	public function update(dt: Float) {
-		client.update();
 		game.update(dt);
 		view.update();
 		// input.update();
+		client.update();
 	}
 
 	public function dispose() {
