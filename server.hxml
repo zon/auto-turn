@@ -1,0 +1,6 @@
+-lib tink_core
+-lib polygonal-ds
+-lib udprotean
+-lib bytetype
+-hl server.hl
+-main server.Main

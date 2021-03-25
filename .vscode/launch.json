@@ -1,0 +1,48 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Server",
+			"request": "launch",
+			"type": "hl",
+			"cwd": "${workspaceFolder}",
+			"program": "server.hl",
+			"preLaunchTask": "build server"
+		},
+		{
+			"name": "Client A",
+			"request": "launch",
+			"type": "hl",
+			"cwd": "${workspaceFolder}",
+			"program": "client.hl",
+			"port": 3353,
+			"preLaunchTask": "build client"
+		},
+		{
+			"name": "Client B",
+			"request": "launch",
+			"type": "hl",
+			"cwd": "${workspaceFolder}",
+			"program": "client.hl",
+			"port": 3354
+		},
+		{
+			"name": "Temp",
+			"request": "launch",
+			"type": "hl",
+			"cwd": "${workspaceFolder}",
+			"program": "temp.hl",
+			"preLaunchTask": "build temp"
+		}
+	],
+	"compounds": [
+		{
+			"name": "Server and Client",
+			"configurations": ["Server", "Client A"]		
+		},
+		{
+			"name": "Server and Two Clients",
+			"configurations": ["Server", "Client A", "Client B"]		
+		}
+	]
+}

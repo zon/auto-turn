@@ -1,0 +1,10 @@
+-lib tink_core
+-lib polygonal-ds
+-lib udprotean
+-lib bytetype
+-lib hlsdl
+-lib heaps
+-hl client.hl
+-D resourcesPath=res
+-D windowSize=1024x1024
+-main client.Main
