@@ -1,5 +1,6 @@
 package client;
 
+import common.messages.GridMessage;
 import common.messages.MoveCommand;
 import common.messages.EntityRemoveMessage;
 import common.messages.EntityAddMessage;
@@ -42,8 +43,8 @@ class Dispatcher {
 		client.disconnect();
 	}
 
-	public function onGridMessage(grid: Grid) {
-		game.loadGrid(grid);
+	public function onGridMessage(msg: GridMessage) {
+		game.parseGrid(msg.name);
 	}
 
 	public function onAddEntityMessage(msg: EntityAddMessage) {

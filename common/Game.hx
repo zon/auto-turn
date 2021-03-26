@@ -3,20 +3,26 @@ package common;
 import common.Grid;
 import common.Pathfinder;
 import common.Entity;
+import common.TilemapData;
 
 class Game {
 	public var grid: Grid;
 	public var pathfinder: Pathfinder;
 	public var entities = new Map<Int, Entity>();
 
+	public var onTilemap = new Array<(data: TilemapData) -> Void>();
 	public var onGrid = new Array<(grid: Grid) -> Void>();
 
 	public function new() {}
 
-	public function loadGrid(grid) {
-		this.grid = grid;
+	public function parseGrid(name) {
+		var data = TilemapData.parse(name);
+		grid = Grid.load(data);
 		pathfinder = new Pathfinder(grid);
 		entities = new Map<Int, Entity>();
+		for (listener in onTilemap) {
+			listener(data);
+		}
 		for (listener in onGrid) {
 			listener(grid);
 		}

@@ -2,7 +2,6 @@ package common;
 
 import polygonal.ds.Heapable;
 import common.Entity;
-import common.messages.GridNodeMessage;
 
 class GridNode implements Heapable<GridNode> {
 	public var x: Int;
@@ -29,15 +28,6 @@ class GridNode implements Heapable<GridNode> {
 
 	public function toString() {
 		return 'GridNode { $x, $y, $solid }';
-	}
-
-	public function toMessage() {
-		var msg = new GridNodeMessage(x, y, solid ? 1 : 0);
-		return msg;
-	}
-
-	public function load(msg: GridNodeMessage) {
-		solid = msg.solid != 0;
 	}
 
 }

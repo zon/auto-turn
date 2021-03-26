@@ -12,7 +12,7 @@ class EntityView extends Bitmap {
 
 	public function new(entity: Entity, res: ResMap, ?parent: Object) {
 		this.entity = entity;
-		super(res.getTile(2), parent);
+		super(res.entities.getTile(2), parent);
 	}
 
 	public function update() {

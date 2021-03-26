@@ -1,27 +1,30 @@
 package client.views;
 
+import common.TilemapData;
 import h2d.Object;
-import common.Grid;
 import h2d.TileGroup;
-import client.views.View;
 
-class GridView extends TileGroup {
+class GridView extends Object {
 	public var res: ResMap;
-	public var grid: Grid;
 
 	public function new(res: ResMap, ?parent: Object) {
 		this.res = res;
-		super(res.general, parent);
+		super(parent);
 	}
 
-	public function load(grid: Grid) {
-		this.grid = grid;
-		clear();
-		for (node in grid.nodes) {
-			var tile = node.solid ? res.getTile(1) : res.getTile(0);
-			var x = node.x * View.unit;
-			var y = node.y * View.unit;
-			add(x, y, tile);
+	public function load(data: TilemapData) {
+		removeChildren();
+		var layer = data.getLayer('walls');
+		var tileset = res.get(data.getTileset('walls'));
+		var group = new TileGroup(tileset.parent, this);
+		for (y in 0...data.width) {
+			for (x in 0...data.height) {
+				var i = data.width * y + x;
+				var px = x * data.tileWidth;
+				var py = y * data.tileHeight;
+				var tile = tileset.get(layer.tiles[i]);
+				group.add(px, py, tile);
+			}
 		}
 	}
 

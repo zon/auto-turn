@@ -5,6 +5,7 @@ import client.ClientGame;
 import client.views.ResMap;
 import client.views.EntityView;
 import common.Grid;
+import common.TilemapData;
 import common.Entity;
 
 class EntitiesView extends Object {

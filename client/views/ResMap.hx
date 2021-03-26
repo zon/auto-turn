@@ -1,25 +1,28 @@
 package client.views;
 
-import h2d.Tile;
 import hxd.Res;
+import common.TilesetData;
 import client.views.View;
+import client.views.Tileset;
 
 class ResMap {
-	public var general: Tile;
-	public var entity: SpriteFrames;
+	public var entities: SpriteFrames;
 
-	var tiles: Array<Tile>;
+	var tilesets = new Map<String, Tileset>();
 
 	public function new() {
 		Res.initEmbed();
-		this.general = Res.load('general.png').toTile();
-		this.tiles = this.general.gridFlatten(View.unit);
-
-		entity = new SpriteFrames('entity');
+		entities = new SpriteFrames('entities');
 	}
 
-	public function getTile(index) {
-		return this.tiles[index];
+	public function get(data: TilesetData): Tileset {
+		if (tilesets.exists(data.name)) {
+			return tilesets[data.name];
+		} else {
+			var set = Tileset.parse(data);
+			tilesets[data.name] = set;
+			return set;
+		}
 	}
 
 }

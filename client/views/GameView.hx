@@ -1,5 +1,6 @@
 package client.views;
 
+import common.TilemapData;
 import h2d.Object;
 import client.views.ResMap;
 import client.views.GridView;
@@ -27,7 +28,7 @@ class GameView extends Object {
 		entities = new EntitiesView(game, res, this);
 		console = new Console(this);
 
-		game.onGrid.push(onGrid);
+		game.onTilemap.push(onTilemap);
 	}
 
 	public function update() {
@@ -35,8 +36,8 @@ class GameView extends Object {
 		console.update();
 	}
 
-	function onGrid(grid: Grid) {
-		this.grid.load(grid);
+	function onTilemap(map: TilemapData) {
+		this.grid.load(map);
 	}
 
 }

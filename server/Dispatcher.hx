@@ -16,7 +16,7 @@ class Dispatcher {
 
 	public function new() {
 		game = new ServerGame();
-		game.loadGrid(Grid.parse('entry.tmx'));
+		game.parseGrid('first');
 
 		server = new Server(this);
 
@@ -31,11 +31,12 @@ class Dispatcher {
 
 	public function onConnect(client: ClientBehavior) {
 		client.send(new PlayerMessage(client.id));
-		game.grid.send(client);
+		client.send(game.grid.toMessage());
 		for (entity in game.entities) {
 			client.send(EntityAddMessage.create(entity));
 		}
-		client.entity = game.createEntity(8, 8, client.id);
+		var node = game.grid.getSpawn();
+		client.entity = game.createEntity(node.x, node.y, client.id);
 	}
 
 	public function onDisconnect(client: ClientBehavior) {

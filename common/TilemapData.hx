@@ -1,5 +1,6 @@
 package common;
 
+import haxe.io.Path;
 import haxe.xml.Access;
 import sys.io.File;
 import common.TilesetData;
@@ -7,51 +8,77 @@ import common.TilesetData.TilesetTile;
 import haxe.ds.Vector;
 
 class TilemapData {
-	public var file: String;
+	public var name: String;
 	public var width: Int;
 	public var height: Int;
-	public var tilesets = new Array<TilesetData>();
-	public var layers = new Map<Int, TilemapLayer>();
+	public var tileWidth: Int;
+	public var tileHeight: Int;
+	public var tilesets = new Map<String, TilesetData>();
+	public var layers = new Map<String, TilemapLayer>();
 
 	public function new () {}
 
-	public function get(x: Int, y: Int, layerId = 0): TilesetTile {
-		if (!layers.exists(layerId)) return TilesetTile.empty;
-		var layer = layers[layerId];
-		var id = layer.tiles[y * width + x];
+	public function getTileset(name = 'walls') {
+		return tilesets.get(name);
+	}
+
+	public function getLayer(name = 'walls') {
+		return layers.get(name);
+	}
+
+	public function get(x: Int, y: Int, layer = 'walls'): TilesetTile {
+		if (!layers.exists(layer)) return TilesetTile.empty;
+		var tiles = layers[layer].tiles;
+		var id = tiles[y * width + x];
+		return findById(id);
+	}
+
+	public function findById(id: Int): TilesetTile {
 		for (tileset in tilesets) {
-			if (id >= tileset.first && id < tileset.first + tileset.count) {
+			if (id >= tileset.firstGid && id < tileset.firstGid + tileset.tileCount) {
 				return tileset.get(id);
 			}
 		}
 		return TilesetTile.empty;
 	}
 
-	public static function load(file) {
-		var text = File.getContent('./res/map/$file');
+	public function getSpawn() {
+		var tile = 0;
+		var tileset = getTileset();
+
+	}
+
+	public static function parse(name) {
+		var text = File.getContent('./res/map/$name.tmx');
 		var xml = Xml.parse(text);
 		var root = new Access(xml.firstElement());
 
 		var res = new TilemapData();
-		res.file = file;
+		res.name = name;
 		res.width = Std.parseInt(root.att.width);
 		res.height = Std.parseInt(root.att.height);
+		res.tileWidth = Std.parseInt(root.att.tilewidth);
+		res.tileHeight = Std.parseInt(root.att.tileheight);
 
 		for (tileset in root.nodes.tileset) {
-			var rs = TilesetData.load(tileset.att.source);
-			rs.first = Std.parseInt(tileset.att.firstgid) - 1;
-			res.tilesets.push(rs);
+			var rs = TilesetData.parse(Path.withoutExtension(tileset.att.source));
+			rs.firstGid = Std.parseInt(tileset.att.firstgid);
+			res.tilesets[rs.name] = rs;
 		}
 
 		for (layer in root.nodes.layer) {
 			var rl = new TilemapLayer();
+			rl.id = Std.parseInt(layer.att.id);
+			rl.name = layer.att.name;
 			rl.tiles = new Vector<Int>(res.width * res.height);
 			var tids = layer.node.data.innerData.split(',');
 			for (i in 0...rl.tiles.length) {
-				rl.tiles[i] = Std.parseInt(tids[i]) - 1;
+				var tid = Std.parseInt(tids[i]);
+				var tile = res.findById(tid);
+				rl.tiles[i] = tid;
+				if (tile.spawn) rl.spawns.push(i);
 			}
-			var id = Std.parseInt(layer.att.id) - 1;
-			res.layers[id] = rl;
+			res.layers[rl.name] = rl;
 		}
 
 		return res;
@@ -60,7 +87,10 @@ class TilemapData {
 }
 
 class TilemapLayer {
+	public var id: Int;
+	public var name: String;
 	public var tiles: Vector<Int>;
+	public var spawns = new Array<Int>();
 
 	public function new() {}
 }

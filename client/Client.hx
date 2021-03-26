@@ -29,14 +29,7 @@ class Client extends UDProteanClient {
 
 			case GridMessage.code:
 				var m: GridMessage = cast message;
-				loadingGrid = new Grid(m.width, m.height);
-
-			case GridNodeMessage.code:
-				var m: GridNodeMessage = cast message;
-				if (loadingGrid.loadNode(m)) {
-					dispatcher.onGridMessage(loadingGrid);
-					loadingGrid = null;
-				}
+				dispatcher.onGridMessage(m);
 
 			case EntityAddMessage.code:
 				var m: EntityAddMessage = cast message;

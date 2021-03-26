@@ -11,7 +11,7 @@ class GridMovement {
 
 	// stats
 	public var actionDuration = 0.25;
-	public var pauseDuration = 2;
+	public var pauseDuration = 1;
 
 	// state
 	var path = new Array<GridNode>();

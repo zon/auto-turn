@@ -1,26 +1,25 @@
 package common;
 
 import common.messages.GridMessage;
-import common.messages.GridNodeMessage;
-import udprotean.shared.UDProteanPeer;
 import common.GridNode;
 import common.TilemapData;
-import haxe.xml.Access;
-import sys.io.File;
 import haxe.ds.Vector;
 import common.Entity;
 import common.Calc;
 
 class Grid {
+	public var name: String;
 	public var width: Int;
 	public var height: Int;
 	public var nodes: Vector<GridNode>;
+	public var spawns: Array<GridNode>;
 
 	public var onAddEntity: (entity: Entity) -> Void;
 	public var onMoveEntity: (entity: Entity) -> Void;
 	public var onRemoveEntity: (entity: Entity) -> Void;
 
-	public function new(width: Int, height: Int) {
+	public function new(name, width, height) {
+		this.name = name;
 		this.width = width;
 		this.height = height;
 		nodes = new Vector<GridNode>(width * height);
@@ -29,12 +28,49 @@ class Grid {
 				nodes[indexCoord(x, y)] = new GridNode(x, y);
 			}
 		}
+		spawns = [];
 	}
 
 	public function get(x, y): Null<GridNode> {
 		if (x < 0 || x >= width) return null;
 		if (y < 0 || y >= height) return null;
 		return nodes[indexCoord(x, y)];
+	}
+
+	public function getSpawn() {
+		for (node in spawns) {
+			return getOpenNearby(node.x, node.y);
+		}
+		return null;
+	}
+
+	// https://stackoverflow.com/a/3706260
+	public function getOpenNearby(x, y): Null<GridNode> {
+		var vx = 1;
+		var vy = 0;
+		var len = 1;
+		var ox = 0;
+		var oy = 0;
+		var p = 0;
+		for (_ in 0...64) {
+
+			var node = get(x + ox, y + oy);
+			if (node != null && !node.isOccupied()) return node;
+
+			ox += vx;
+			oy += vy;
+			p += 1;
+			if (p >= len) {
+				p = 0;
+				var f = vx;
+				vx = -vy;
+				vy = f;
+				if (vy == 0) {
+					len += 1;
+				}
+			}
+		}
+		return null;
 	}
 
 	public function isSolid(x, y) {
@@ -157,38 +193,30 @@ class Grid {
 		return tile;
 	}
 
-	public function send(peer: UDProteanPeer) {
-		peer.send(toMessage());
-		for (node in nodes) {
-			peer.send(node.toMessage());
-		}
-	}
-
 	public function toMessage() {
-		return new GridMessage(width, height);
+		return new GridMessage(name);
 	}
 
-	public function loadNode(msg: GridNodeMessage) {
-		var i = indexCoord(msg.x, msg.y);
-		nodes[i].load(msg);
-
-		// true when last node is loaded
-		return i + 1 >= nodes.length;
+	public static function parse(name) {
+		var data = TilemapData.parse(name);
+		return load(data);
 	}
 
-	public static function parse(file) {
-		var data = TilemapData.load(file);
-		var grid = new Grid(data.width, data.height);
+	public static function load(data: TilemapData) {
+		var grid = new Grid(data.name, data.width, data.height);
 		for (y in 0...data.height) {
 			for (x in 0...data.width) {
 				grid.get(x, y).solid = data.get(x, y).solid;
 			}
 		}
+		for (layer in data.layers) {
+			for (index in layer.spawns) {
+				var x = index % grid.width;
+				var y = Math.floor(index / grid.width);
+				grid.spawns.push(grid.get(x, y));
+			}
+		}
 		return grid;
-	}
-
-	public static function load(msg: GridMessage) {
-		return new Grid(msg.width, msg.height);
 	}
 
 }
